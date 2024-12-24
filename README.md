@@ -54,44 +54,59 @@ cargo install specbase
 
 ## Usage
 
-Initialize a new spec database:
+Initialize a new spec database (stored in ~/.config/specbase/specbase.db):
 ```bash
 spec init
 ```
+If the database already exists, you'll be asked if you want to override it.
 
 Add a new specfile:
 ```bash
-# Add from content
-spec add --name "My Spec" --description "A description" --content "# My Specification..."
+# Add with direct content
+spec add --name "specfile1" --description "This is a specfile for a package" --content "This is the content of the specfile"
 
 # Add from file
-spec add --name "My Spec" --description "A description" --file path/to/spec.md
+spec add --name "specfile1" --description "This is a specfile for a package" --file "path/to/file"
 ```
+The command will print the ID of the newly added specfile.
 
 Read a specfile:
 ```bash
-spec get --id 1
+spec get 1
 ```
+This will print the content of the specfile.
 
 Update a specfile:
 ```bash
-spec update --id 1 --name "Updated Name" --description "Updated description" --content "Updated content"
+spec update --id 1 --name "specfile1" --description "This is a specfile for a package" --content "This is the new content of the specfile"
 ```
+The command will print:
+- "ok" if the update was successful
+- "error" if the update failed
+- "specfile does not exist" if the specfile is not found
 
 Delete a specfile:
 ```bash
-spec delete --id 1
+spec delete 1
 ```
+The command will print:
+- "ok" if successful
+- "specfile does not exist" if the specfile is not found
 
 List all specfiles:
 ```bash
 spec list
 ```
+The command will print:
+- A list of all specfiles with their IDs, names, and descriptions
+- "ok" if successful
+- "specfile does not exist" if no specfiles are found
 
 Search specfiles:
 ```bash
-spec query --query "search term"
+spec query "new content"
 ```
+This will perform a full-text search across all specfiles and display matching results.
 
 ## Development
 

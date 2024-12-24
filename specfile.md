@@ -102,8 +102,8 @@ spec add --name "specfile1" --description "This is a specfile for a package" --f
 
 print the ID of the newly added specfile
 
-* Read an existing specfile
-spec get --id 1 
+* Read an existing specfile for an ID
+spec get 1 
  
 print out the content of the specfile
 
@@ -114,8 +114,8 @@ print ok, if the update was successful.
 Print error, if the update failed.
 Print "specfile does not exist" if the specfile is not found
 
-* Delete an existing specfile
-spec delete --id 1
+* Delete an existing specfile, identified b
+spec delete 1
 
 * List all specfiles
 spec list
@@ -124,7 +124,7 @@ print ok, if the update was successful.
 Print "specfile does not exist" if the specfile is not found
 
 * Query all specfiles using fulltext
-spec query --query "new content"
+spec query "new content"
 
 * show help
 spec --help

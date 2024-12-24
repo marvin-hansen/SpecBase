@@ -1,6 +1,15 @@
 use anyhow::Result;
 use lib_specbase::{SpecBase, Specfile};
 
+// The example successfully shows:
+//
+// Initializing the database
+// Creating a specfile
+// Reading a specfile
+// Updating a specfile
+// Listing all specfiles
+// Querying specfiles
+// Deleting a specfile
 fn main() -> Result<()> {
     // Initialize the database
     let spec_db = SpecBase::init()?;

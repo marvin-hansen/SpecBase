@@ -62,7 +62,6 @@ enum Commands {
     /// Retrieve a specfile by its ID
     Get {
         /// ID of the specfile to retrieve
-        #[arg(long)]
         id: i64,
     },
     
@@ -85,7 +84,6 @@ enum Commands {
     /// Delete a specfile by its ID
     Delete {
         /// ID of the specfile to delete
-        #[arg(long)]
         id: i64,
     },
     
@@ -95,7 +93,6 @@ enum Commands {
     /// Search for specfiles using fulltext search
     Query {
         /// Search term to look for in names, descriptions, and content
-        #[arg(long)]
         query: String,
     },
 }
@@ -148,7 +145,7 @@ fn main() -> Result<()> {
             let spec_db = SpecBase::init()?;
             match spec_db.read_specfile(id) {
                 Ok(specfile) => println!("{}", specfile.content),
-                Err(e) => println!("Error: {}", e),
+                Err(_) => println!("specfile does not exist"),
             }
         }
         
@@ -163,7 +160,13 @@ fn main() -> Result<()> {
             let spec_db = SpecBase::init()?;
             match spec_db.update_specfile(id, &specfile) {
                 Ok(_) => println!("ok"),
-                Err(e) => println!("Error: {}", e),
+                Err(e) => {
+                    if e.to_string().contains("not found") {
+                        println!("specfile does not exist");
+                    } else {
+                        println!("error");
+                    }
+                }
             }
         }
         
@@ -171,18 +174,23 @@ fn main() -> Result<()> {
             let spec_db = SpecBase::init()?;
             match spec_db.delete_specfile(id) {
                 Ok(_) => println!("ok"),
-                Err(e) => println!("Error: {}", e),
+                Err(_) => println!("specfile does not exist"),
             }
         }
         
         Commands::List => {
             let spec_db = SpecBase::init()?;
-            let specfiles = spec_db.list_specfiles()?;
-            for specfile in specfiles {
-                println!("ID: {}", specfile.id.unwrap());
-                println!("Name: {}", specfile.name);
-                println!("Description: {}", specfile.description);
-                println!("---");
+            match spec_db.list_specfiles() {
+                Ok(specfiles) => {
+                    for specfile in specfiles {
+                        println!("ID: {}", specfile.id.unwrap());
+                        println!("Name: {}", specfile.name);
+                        println!("Description: {}", specfile.description);
+                        println!("---");
+                    }
+                    println!("ok");
+                }
+                Err(_) => println!("specfile does not exist"),
             }
         }
         
