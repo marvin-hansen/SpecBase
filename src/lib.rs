@@ -60,11 +60,6 @@ impl SpecBase {
         std::fs::create_dir_all(&config_dir)?;
 
         let db_path = config_dir.join("specbase.db");
-        // Remove existing database file if it exists
-        if db_path.exists() {
-            std::fs::remove_file(&db_path)?;
-        }
-        
         let conn = Connection::open(&db_path)?;
 
         conn.execute(

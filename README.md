@@ -46,12 +46,6 @@ source ~/.bashrc  # or ~/.zshrc
 
 spec --help
 
-### From Cargo (All Platforms)
-
-```bash
-cargo install specbase
-```
-
 ## Usage
 
 Initialize a new spec database (stored in ~/.config/specbase/specbase.db):
