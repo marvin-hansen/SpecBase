@@ -1,71 +1,106 @@
+//! SpecBase CLI
+//! 
+//! A command-line tool for managing specification files in a structured way.
+//! Uses SQLite as a backend database to store and query specifications.
+//! 
+//! # Usage
+//! 
+//! Initialize a new database:
+//! ```bash
+//! spec init
+//! ```
+//! 
+//! Add a new specification:
+//! ```bash
+//! spec add --name "My Spec" --description "Description" --content "# Content"
+//! # or from file
+//! spec add --name "My Spec" --description "Description" --file path/to/spec.md
+//! ```
+
 use clap::{Parser, Subcommand};
 use lib_specbase::{SpecBase, Specfile};
 use std::fs;
 use std::path::PathBuf;
 use anyhow::{Result, Context};
 
+/// Version string from Cargo.toml
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+/// Command-line interface for SpecBase
 #[derive(Parser)]
 #[command(name = "spec")]
 #[command(about = "SpecBase CLI - A tool to manage specification files")]
 #[command(version = VERSION)]
 struct Cli {
+    /// The command to execute
     #[command(subcommand)]
     command: Commands,
 }
 
+/// Available commands for the SpecBase CLI
 #[derive(Subcommand)]
 enum Commands {
-    /// Initialize a new spec database
+    /// Initialize a new spec database in ~/.config/specbase/
     Init,
     
-    /// Add a new specfile
+    /// Add a new specfile to the database
     Add {
+        /// Name of the specification
         #[arg(long)]
         name: String,
+        /// Brief description of the specification
         #[arg(long)]
         description: String,
+        /// Content of the specification in markdown format
         #[arg(long)]
         content: Option<String>,
+        /// Path to a file containing the specification content
         #[arg(long)]
         file: Option<PathBuf>,
     },
     
-    /// Get a specfile by ID
+    /// Retrieve a specfile by its ID
     Get {
+        /// ID of the specfile to retrieve
         #[arg(long)]
         id: i64,
     },
     
     /// Update an existing specfile
     Update {
+        /// ID of the specfile to update
         #[arg(long)]
         id: i64,
+        /// New name for the specification
         #[arg(long)]
         name: String,
+        /// New description for the specification
         #[arg(long)]
         description: String,
+        /// New content for the specification
         #[arg(long)]
         content: String,
     },
     
-    /// Delete a specfile by ID
+    /// Delete a specfile by its ID
     Delete {
+        /// ID of the specfile to delete
         #[arg(long)]
         id: i64,
     },
     
-    /// List all specfiles
+    /// List all specfiles in the database
     List,
     
-    /// Query specfiles using fulltext search
+    /// Search for specfiles using fulltext search
     Query {
+        /// Search term to look for in names, descriptions, and content
         #[arg(long)]
         query: String,
     },
 }
 
+/// Main entry point for the SpecBase CLI
 fn main() -> Result<()> {
     let cli = Cli::parse();
     

@@ -1,5 +1,5 @@
-use lib_specbase::{SpecBase, Specfile};
 use anyhow::Result;
+use lib_specbase::{SpecBase, Specfile};
 
 fn main() -> Result<()> {
     // Initialize the database
@@ -13,7 +13,7 @@ fn main() -> Result<()> {
         description: "An example specification file".to_string(),
         content: "# Example Specification\n\nThis is an example specification.".to_string(),
     };
-    
+
     let id = spec_db.create_specfile(&spec)?;
     println!("Created specfile with ID: {}", id);
 
@@ -31,7 +31,7 @@ fn main() -> Result<()> {
         description: "Updated description".to_string(),
         content: "# Updated Specification\n\nThis specification has been updated.".to_string(),
     };
-    
+
     spec_db.update_specfile(id, &updated)?;
     println!("\nUpdated specfile successfully");
 
