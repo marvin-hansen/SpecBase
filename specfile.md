@@ -8,29 +8,106 @@ version = 1
 
 ## Overview
 
+This is a specification file for the SpecBase CLI.
+
+SpecBase is a command-line tool that allows users to manage their specfiles in a structured and easy-to-use way.
+Internally, SpecBase uses a SQLite database to store and query all specfiles.
+
 ## Context
 
-Current crate:
+Current crate: specbase
+Programming language: Rust
+Build tool: Cargo
 
-
-### Internal dependencies: 
-* 
+### Internal dependencies:
 
 ### External dependencies:
-*
+* sqlite3
+* clap
 
 ### Related files
 
 ## Requirements
 
 ### Functional Requirements
-  
+
+specfile:
+* A specfile is a Markdown file that contains requirement and specification information about a specific software package or library.
+
+**Managing specfiles**
+* Add a new specfile
+* Read an existing specfile
+* Update an existing specfile
+* Delete an existing specfile
+
+**Query and list existing specfiles**
+* List all specfiles
+* Query all specfiles using fulltext
+
+**CLI**
+* CLI with standard help format for each command
+* Ability to interrupt long run running commands with ctrl-c
+
 **Methods**
 
-**Code Example**
+1) crate_specfile
+ 
+Takes an input specfile, and creates a new specfile the database; returns the ID of the specfile.
+ 
+2) read_specfile
+ 
+Takes as input the ID of a specfile, and returns the fulltext of the specfile.
+ 
+3) update_specfile
+ 
 
-**Usage Example**
+Takes as input the ID of a specfile, and an input specfile, and updates the existing specfile in the database.
 
+4) delete_specfile
+
+
+Takes as input the ID of a specfile, and deletes the specfile from the database.
+
+5) list_specfiles
+
+Returns a list of all specfiles in the database.
+
+6) query_specfiles
+
+Takes as input a string, performs fulltext search, and returns a list of all specfiles that match the string.
+
+
+**CLI Usage Example**
+
+* Initialize a new spec database
+spec init
+
+* Add a new specfile by content 
+spec add --name "specfile1" --description "This is a specfile for a package" --content "This is the content of the specfile"
+ 
+* Add a new specfile by file
+spec add --name "specfile1" --description "This is a specfile for a package" --file "path/to/file"
+
+* Read an existing specfile
+spec get --id 1 
+
+* Update an existing specfile
+spec update --id 1 --name "specfile1" --description "This is a specfile for a package" --content "This is the new content of the specfile"
+
+* Delete an existing specfile
+spec delete --id 1
+
+* List all specfiles
+spec list
+
+* Query all specfiles using fulltext
+spec query --query "new content"
+
+* show help
+spec --help
+
+* show version
+spec --version
 
 ### Non-Functional Requirements
 
@@ -48,24 +125,25 @@ Prevention of memory leaks
 
 **Security**
 Limit scope if internal methods
+Minimize usage of external dependencies
 Apply security best practices to prevent security vulnerabilities.  
 
 ### Tasks
 
 **Build:**
-* Implement all requirements stated above 
-* Export all public methods via the lib.rs file
-* Build only this crate. 
+* Implement all requirements stated above as a separated library crate called lib_specbase
+* Implement the CLI in the main.rs file
+* Build all crates with cargo build
 
 **Test:**
-* When the crate builds, proceed with testing. 
+* When the crate builds, proceed with testing lib_specbase. 
 * Create a test folder, or of it already exists, add or update test files in the test folder 
 * Generate full tests coverage with all tests in dedicated test files in the test folder
-* Run all tests only for this crate.
+* Run all tests using cargo test
 
 **Example:**
 * When all tests pass, crate an example folder.
-* Add an example file to the example folder showcasing the usage of the crate
+* Add an example file to the example folder showcasing the usage of the CLI
 * Add the example to Cargo.toml
 * Ensure that the example code builds and runs 
 
