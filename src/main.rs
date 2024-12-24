@@ -1,1 +1,167 @@
-fn main() {}
+use clap::{Parser, Subcommand};
+use lib_specbase::{SpecBase, Specfile};
+use std::fs;
+use std::path::PathBuf;
+use anyhow::{Result, Context};
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+#[derive(Parser)]
+#[command(name = "spec")]
+#[command(about = "SpecBase CLI - A tool to manage specification files")]
+#[command(version = VERSION)]
+struct Cli {
+    #[command(subcommand)]
+    command: Commands,
+}
+
+#[derive(Subcommand)]
+enum Commands {
+    /// Initialize a new spec database
+    Init,
+    
+    /// Add a new specfile
+    Add {
+        #[arg(long)]
+        name: String,
+        #[arg(long)]
+        description: String,
+        #[arg(long)]
+        content: Option<String>,
+        #[arg(long)]
+        file: Option<PathBuf>,
+    },
+    
+    /// Get a specfile by ID
+    Get {
+        #[arg(long)]
+        id: i64,
+    },
+    
+    /// Update an existing specfile
+    Update {
+        #[arg(long)]
+        id: i64,
+        #[arg(long)]
+        name: String,
+        #[arg(long)]
+        description: String,
+        #[arg(long)]
+        content: String,
+    },
+    
+    /// Delete a specfile by ID
+    Delete {
+        #[arg(long)]
+        id: i64,
+    },
+    
+    /// List all specfiles
+    List,
+    
+    /// Query specfiles using fulltext search
+    Query {
+        #[arg(long)]
+        query: String,
+    },
+}
+
+fn main() -> Result<()> {
+    let cli = Cli::parse();
+    
+    match cli.command {
+        Commands::Init => {
+            let config_dir = dirs::config_dir()
+                .context("Failed to get config directory")?
+                .join("specbase");
+            let db_path = config_dir.join("specbase.db");
+            
+            if db_path.exists() {
+                println!("Database already exists at {:?}. Do you want to override it? [y/N]", db_path);
+                let mut input = String::new();
+                std::io::stdin().read_line(&mut input)?;
+                if !input.trim().eq_ignore_ascii_case("y") {
+                    println!("Operation aborted");
+                    return Ok(());
+                }
+            }
+            
+            SpecBase::init()?;
+            println!("Initialized new spec database at {:?}", db_path);
+        }
+        
+        Commands::Add { name, description, content, file } => {
+            let content = if let Some(file_path) = file {
+                fs::read_to_string(file_path)?
+            } else {
+                content.context("Either --content or --file must be provided")?
+            };
+            
+            let specfile = Specfile {
+                id: None,
+                name,
+                description,
+                content,
+            };
+            
+            let spec_db = SpecBase::init()?;
+            let id = spec_db.create_specfile(&specfile)?;
+            println!("Added new specfile with ID: {}", id);
+        }
+        
+        Commands::Get { id } => {
+            let spec_db = SpecBase::init()?;
+            match spec_db.read_specfile(id) {
+                Ok(specfile) => println!("{}", specfile.content),
+                Err(e) => println!("Error: {}", e),
+            }
+        }
+        
+        Commands::Update { id, name, description, content } => {
+            let specfile = Specfile {
+                id: Some(id),
+                name,
+                description,
+                content,
+            };
+            
+            let spec_db = SpecBase::init()?;
+            match spec_db.update_specfile(id, &specfile) {
+                Ok(_) => println!("ok"),
+                Err(e) => println!("Error: {}", e),
+            }
+        }
+        
+        Commands::Delete { id } => {
+            let spec_db = SpecBase::init()?;
+            match spec_db.delete_specfile(id) {
+                Ok(_) => println!("ok"),
+                Err(e) => println!("Error: {}", e),
+            }
+        }
+        
+        Commands::List => {
+            let spec_db = SpecBase::init()?;
+            let specfiles = spec_db.list_specfiles()?;
+            for specfile in specfiles {
+                println!("ID: {}", specfile.id.unwrap());
+                println!("Name: {}", specfile.name);
+                println!("Description: {}", specfile.description);
+                println!("---");
+            }
+        }
+        
+        Commands::Query { query } => {
+            let spec_db = SpecBase::init()?;
+            let specfiles = spec_db.query_specfiles(&query)?;
+            for specfile in specfiles {
+                println!("ID: {}", specfile.id.unwrap());
+                println!("Name: {}", specfile.name);
+                println!("Description: {}", specfile.description);
+                println!("---");
+            }
+        }
+    }
+    
+    Ok(())
+}
