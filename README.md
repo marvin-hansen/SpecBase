@@ -12,6 +12,42 @@ A command-line tool for managing specification files in a structured and easy-to
 
 ## Installation
 
+### From Source (Linux and macOS)
+
+1. Clone the repository:
+```bash
+git clone https://github.com/marvin-hansen/specbase.git
+cd specbase
+```
+
+2. Run the install script:
+```bash
+./install.sh
+```
+
+This will:
+- Build the project in release mode
+- Create ~/bin directory if it doesn't exist
+- Copy the binary to ~/bin/spec
+- Make it executable
+
+3. Add ~/bin to your PATH if not already added:
+```bash
+# Add this to your ~/.bashrc, ~/.zshrc, or equivalent
+export PATH="$HOME/bin:$PATH"
+```
+
+4. Reload your shell or run:
+```bash
+source ~/.bashrc  # or ~/.zshrc
+```
+
+5. Use spec i.e.
+
+spec --help
+
+### From Cargo (All Platforms)
+
 ```bash
 cargo install specbase
 ```

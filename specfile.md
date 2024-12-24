@@ -177,3 +177,14 @@ Apply security best practices to prevent security vulnerabilities.
 
 **Finalize:**
 Generate a git commit message summarizing all changes made to the crate and print the commit message to the terminal.
+
+
+Create a small install script that does the following:
+
+* runs  cargo b --release
+
+* copies the resulting binary from target/release/spec to ~/bin/spec
+
+* Makes the binary executable
+
+* runs spec --version 
