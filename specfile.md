@@ -50,6 +50,14 @@ specfile:
 
 **Methods**
 
+0) init
+
+Initialize a new spec database
+takes no parameters. creates a new sqlite database and stores it under the name specbase.db 
+in the home directory in the folder ~/.config/specbase
+
+All DB access is from and to the DB file in ~/.config/specbase/specbase.db
+
 1) crate_specfile
  
 Takes an input specfile, and creates a new specfile the database; returns the ID of the specfile.
@@ -79,26 +87,41 @@ Takes as input a string, performs fulltext search, and returns a list of all spe
 
 **CLI Usage Example**
 
-* Initialize a new spec database
+* Initialize a new spec database stored in  ~/.config/specbase/specbase.db
 spec init
+
+Check if the file exists, and if so, ask if the user wants to override it or abort the operation?
 
 * Add a new specfile by content 
 spec add --name "specfile1" --description "This is a specfile for a package" --content "This is the content of the specfile"
+
+print the ID of the newly added specfile 
  
 * Add a new specfile by file
 spec add --name "specfile1" --description "This is a specfile for a package" --file "path/to/file"
 
+print the ID of the newly added specfile
+
 * Read an existing specfile
 spec get --id 1 
+ 
+print out the content of the specfile
 
 * Update an existing specfile
 spec update --id 1 --name "specfile1" --description "This is a specfile for a package" --content "This is the new content of the specfile"
+ 
+print ok, if the update was successful.
+Print error, if the update failed.
+Print "specfile does not exist" if the specfile is not found
 
 * Delete an existing specfile
 spec delete --id 1
 
 * List all specfiles
 spec list
+
+print ok, if the update was successful.
+Print "specfile does not exist" if the specfile is not found
 
 * Query all specfiles using fulltext
 spec query --query "new content"
